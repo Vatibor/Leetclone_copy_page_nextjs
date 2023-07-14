@@ -1,16 +1,52 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSetRecoilState} from "recoil";
 import {authModalState} from "@/atoms/authModalAtoms";
+import {useSignInWithEmailAndPassword} from "react-firebase-hooks/auth";
+import {auth} from "@/firebase/firebase";
+import {Simulate} from "react-dom/test-utils";
+import input = Simulate.input;
+import {useRouter} from "next/router";
 
 const Login = () => {
   const setAuthModalState = useSetRecoilState(authModalState)
+  const router = useRouter()
 
   const handleClick = (type: "login" | "register" | "forgotPassword") => {
     setAuthModalState((prev) => ({ ...prev, type}))
   }
 
+  const [inputs, setInputs] = useState({ email: "", password: ""});
+
+  const [
+    signInWithEmailAndPassword,
+    user,
+    loading,
+    error,
+  ] = useSignInWithEmailAndPassword(auth);
+
+  const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  const handleLogin = async (e:React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if(!inputs.email || !inputs.password) return alert("Please fill all fields")
+    try {
+      const user = await signInWithEmailAndPassword(inputs.email, inputs.password)
+      if(!user) return
+      router.push("/")
+    } catch (error: any) {
+      alert(error.message)
+    }
+  }
+
+  useEffect(() => {
+    if(error) alert(error.message)
+  }, [error]);
+
+
   return (
-    <form className="space-y-6 px-6 pb-4">
+    <form className="space-y-6 px-6 pb-4" onSubmit={handleLogin}>
       <h3 className="text-xl font-medium text-white">Sign in to LeetClone</h3>
 
       <div>
@@ -21,6 +57,7 @@ const Login = () => {
           Your Email
         </label>
         <input
+          onChange={handleInputChange}
           name="email"
           type="email"
           id="email"
@@ -38,6 +75,7 @@ const Login = () => {
           Your Password
         </label>
         <input
+          onChange={handleInputChange}
           name="password"
           type="password"
           id="password"
@@ -52,7 +90,7 @@ const Login = () => {
         className="w-full text-white focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5
         text-center bg-brand-orange hover:bg-brand-orange-s"
       >
-        Login
+        {loading ? "Login..." : "Login"}
       </button>
 
       <button
