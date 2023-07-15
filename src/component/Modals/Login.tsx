@@ -6,6 +6,7 @@ import {auth} from "@/firebase/firebase";
 import {Simulate} from "react-dom/test-utils";
 import input = Simulate.input;
 import {useRouter} from "next/router";
+import {toast} from "react-toastify";
 
 const Login = () => {
   const setAuthModalState = useSetRecoilState(authModalState)
@@ -36,12 +37,12 @@ const Login = () => {
       if(!user) return
       router.push("/")
     } catch (error: any) {
-      alert(error.message)
+      toast.error(error.message, { position: "top-center", autoClose: 3000, theme: "dark"})
     }
   }
 
   useEffect(() => {
-    if(error) alert(error.message)
+    if(error) toast.error(error.message, { position: "top-center", autoClose: 3000, theme: "dark"})
   }, [error]);
 
 

@@ -1,8 +1,29 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {useSendPasswordResetEmail} from "react-firebase-hooks/auth";
+import {auth} from "@/firebase/firebase";
+import {toast} from "react-toastify";
 
 const ResetPassword = () => {
+  const [email, setEmail] = useState('');
+  const [sendPasswordResetEmail, sending, error] = useSendPasswordResetEmail(
+    auth
+  );
+
+  const handleReset = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const success = await sendPasswordResetEmail(
+      email
+    )
+
+    if (success) toast.success("Pasword reset email sent", { position: "top-center", autoClose: 3000 })
+  }
+
+  useEffect(() => {
+    if (error) toast.error("Email not exists!", { position: "top-center", autoClose: 3000 })
+  }, [error])
+
   return (
-    <form className="space-y-6 px-6 pb-4">
+    <form className="space-y-6 px-6 pb-4" onSubmit={handleReset}>
       <h3 className="text-xl font-medium text-white">Reset Password</h3>
       <p className="text-sm text-white">
         Forgotten your password? Enter your e-mail address below, and we&apos;ll send you an e-mail allowing you to
@@ -17,6 +38,7 @@ const ResetPassword = () => {
           Your Email
         </label>
         <input
+          onChange={(e) => setEmail(e.target.value)}
           name="email"
           type="email"
           id="email"

@@ -6,6 +6,7 @@ import {authModalState} from "@/atoms/authModalAtoms";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "@/firebase/firebase";
 import {useRouter} from "next/router";
+import Image from "next/image";
 
 const AuthPage = () => {
   const authModal = useRecoilValue(authModalState)
@@ -26,7 +27,7 @@ const AuthPage = () => {
         <Navbar />
 
         <div className="flex items-center justify-center h-[calc(100vh-5rem)] pointer-events-none select-none">
-          <img src="/hero.png" alt="hero image"/>
+          <Image src="/hero.png" alt="hero image" width={700} height={700}/>
         </div>
         {authModal.isOpen && <AuthModal />}
       </div>
