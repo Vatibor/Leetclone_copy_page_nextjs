@@ -41,7 +41,7 @@ export const problems: Problem[] = [
     videoId: "xty7fr-k0TU",
   },
   {
-    id: "search-a-2d-matrix",
+    id: "search-a-2d-matrix.ts",
     title: "Search a 2D Matrix",
     difficulty: "Medium",
     category: "Binary Search",
